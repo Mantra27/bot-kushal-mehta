@@ -2,11 +2,11 @@ const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton, MessageC
 const music = require('@koenie06/discord.js-music');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const fs = require('fs');
+
 let volume = 1;
 
-
 let row = new MessageActionRow()
-			.addComponents(
+            .addComponents(
 				new MessageButton()
 					.setCustomId('vup')
 					.setLabel('Volume +10 🔼')
@@ -18,6 +18,7 @@ let row = new MessageActionRow()
 )
 
 /* This code will run when the client receives a interaction */
+
 client.on('ready', ()=>{
 
     console.log(client.user.tag)
@@ -43,7 +44,7 @@ client.on('messageCreate', async (msg) => {
             else{
             let song = msg.content.split('+play')[1]
             const channel = msg.member.voice.channel;
-
+        
            music.play({
 
                interaction: msg,
@@ -71,10 +72,11 @@ client.on('messageCreate', async (msg) => {
                 })
 
             }
+
             else{
 
                 let reply_is = await music.getQueue({ interaction: msg }).then(async (e)=>{
-                    return e[e.length -1].info.title;
+                    return e[e.length - 1].info.title;
                 })
 
                 let queue_count = await music.getQueue({ interaction: msg }).then(async (e)=>{
@@ -129,8 +131,8 @@ client.on('messageCreate', async (msg) => {
                     }
                     else{
 
-                        msg.reply('cant skin to the border line')
-                        
+                        msg.reply('im playing last song in the queue, can not skip anymore.')
+
                     }
                 
         }
@@ -165,8 +167,24 @@ client.on('messageCreate', async (msg) => {
 
                 else{   
 
-                    console.log(music.getQueue({ interaction: msg }).info)
+                    let bruh = music.getQueue({ interaction: msg }).info.then((e)=>{
+                        return e.length;
+                    })
 
+                    console.log(music.getQueue({ interaction: msg }).info)
+                    let rec_count = 0;
+                    const recur = () =>{
+                        if(rec_count<=bruh){
+                            recur();
+                            msg.channel.send(music.getQueue({ interaction: msg }).info.then((e)=>{
+                                return e[rec_count].info.title;
+                            }))
+                            rec_count++
+                        }
+                        else{
+
+                        }
+                    }
                 }
         }
 
@@ -181,7 +199,7 @@ client.on('messageCreate', async (msg) => {
         }
         }
 
-        if(msg.content.includes('+volume')){
+        if(msg.content.includes('+volume') || msg.content.includes('+v')){
 
             if(!msg.member.voice.channel){
                 msg.reply('get into vc first')
@@ -208,11 +226,13 @@ client.on('messageCreate', async (msg) => {
         }
         
     };
-    if(msg.content == '+test'){
-        await music.getQueue({ interaction: msg }).then(async (e)=>{
-            console.log(e.length)
-        })
-    }
+    if(msg.content.includes('+clear')){
+        if(msg.content.split('+clear')[1]>100){
+            msg.reply('cannot delete more than 100 texts')
+        }
+        let deleteCount = parseInt(msg.content.split('+clear')[1])
+        msg.channel.bulkDelete(deleteCount + 1).catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
+        }
 });
 
-client.login('<token>');
+client.login('OTAwNzcxMTU2ODE3MjM1OTY4.YXGKgw.4lawJ4Pn9_jzTYxUb8_Igj8dVdE');
