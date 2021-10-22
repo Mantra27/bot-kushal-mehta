@@ -235,4 +235,4 @@ client.on('messageCreate', async (msg) => {
         }
 });
 
-client.login('OTAwNzcxMTU2ODE3MjM1OTY4.YXGKgw.4lawJ4Pn9_jzTYxUb8_Igj8dVdE');
+client.login('');
